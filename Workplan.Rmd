@@ -1,0 +1,176 @@
+---
+title: "Workplan"
+author: "Matt Grainger"
+date: "13 2 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Mapping to Darwin Core
+
+There have been several attempts to use r to map to and read from Darwin core format (e.g. https://github.com/inbo/dwc-in-R; https://ropensci.org/technotes/2016/12/23/finch-release/). Using these as a basis we can build functions to ensure automation (or reduce the need for coding knowledge as much as possible). 
+
+
+# Example from https://inbo.github.io/dwc-in-R/dwc-mapping.html 
+
+A raw data file of a checklist of non-native freshwater fish species in Belgium is mapped to Darwin core variables using predominately the tidyverse, magrittr, and janitor packages.  
+
+```{r example from inbo, warning=FALSE, message=FALSE}
+# Example from https://inbo.github.io/dwc-in-R/dwc-mapping.html -----------
+
+# Load libraries ----------------------------------------------------------
+
+library(tidyverse) # For data transformation (includes dplyr)
+library(magrittr)  # For %<>% pipes
+library(readxl)    # For reading excel files
+library(janitor)   # For basic cleaning of the data
+
+# Get data ----------------------------------------------------------------
+
+raw_data <- read_excel("Data/AI_2016_Boets_etal_Supplement.xls", 
+                                            sheet = "checklist")
+
+
+# Clean names & add prefix "raw" ------------------------------------------
+
+raw_data %<>% clean_names()    
+
+colnames(raw_data) <- paste0("raw_", colnames(raw_data))
+
+
+# Keep a copy of the raw data ---------------------------------------------
+
+taxon <- raw_data # Generate taxon by making a copy of raw_data
+
+
+# Add metadata cols -------------------------------------------------------
+
+taxon %<>% mutate(language = "en")
+taxon %<>% mutate(license = "http://creativecommons.org/publicdomain/zero/1.0/")
+taxon %<>% mutate(rightsHolder = "Ghent University Aquatic Ecology")
+taxon  %<>% mutate(datasetID = "https://doi.org/10.15468/yxcq07")
+taxon %<>% mutate(datasetName = "Inventory of alien macroinvertebrates in Flanders, Belgium")
+
+# Add other cols ----------------------------------------------------------
+taxon %<>% mutate(kingdom = "Animalia")
+taxon %<>% mutate(nomenclaturalCode = "ICZN")
+
+
+# Unaltered values --------------------------------------------------------
+
+taxon %>% distinct(raw_phylum)
+taxon %<>% mutate(taxonID = raw_taxon_id)
+taxon %<>% mutate(scientificName = raw_species)
+taxon %<>% mutate(family = raw_family)
+
+
+# Altered values ----------------------------------------------------------
+
+#standard conversion of rawdata
+
+taxon %>% distinct(raw_order)
+
+#Veneroida is a typo. We need to replace this by Venerida:
+taxon %<>% 
+  mutate(order = recode(raw_order, "Veneroidea" = "Venerida")) 
+
+taxon %>%
+  select(raw_order, order) %>%
+  group_by_all() %>% 
+  summarize()
+
+taxon %>% distinct(raw_phylum)
+#However, Crustacea is not a phylum but a subphylum. The phylum to which crustaceans belong is Arthropoda. We can correct this with recode():
+taxon %<>% mutate (phylum = recode(raw_phylum, "Crustacea" = "Arthropoda"))
+
+#Other use cases (not applicable to this data):
+# distribution %<>% mutate(description = recode(raw_d_n,
+#                                                 "Ext.?"     = "Ext.",
+#                                                 "Ext./Cas." = "Cas.",
+#                                                 "Cas.?"     = "Cas.",
+#                                                 "Nat.?"     = "Nat.",
+#                                                 .missing = ""))
+# 
+# distribution %<>% mutate(locality = recode(value,
+#                                            "AF"     = "Africa (WGSRPD:2)",
+#                                            "AM"     = "pan-American",
+#                                            "AS"     = "Asia",
+#                                            "AS-Te"  = "temperate Asia (WGSRPD:3)",
+#                                            "AS-Tr"  = "tropical Asia (WGSRPD:4)",
+#                                            "AUS"    = "Australasia (WGSRPD:5)",
+#                                            "Cult."  = "cultivated origin",
+#                                            "E"      = "Europe (WGSRPD:1)",
+#                                            "Hybr."  = "hybrid origin",
+#                                            "NAM"    = "Northern America (WGSRPD:7)",
+#                                            "SAM"    = "Southern America (WGSRPD:8)",
+#                                            "Trop."  = "Pantropical",
+#                                            .default = "",
+#                                            .missing = ""
+# ))
+
+
+taxon %>% distinct(raw_species)
+# Although most raw_species are in fact species, Dreissena rostriformis bugensis is not a species but a subspecies. We need to make this distinction in the mapping process:
+taxon %<>% mutate(taxonRank = case_when(
+    raw_species == "Dreissena rostriformis bugensis" ~ "subspecies",
+    raw_species != "Dreissena rostriformis bugensis" ~ "species")
+  )
+# compare our newly mapped data with the original data:
+  taxon %>% select(raw_species, taxonRank) %>%
+  group_by_all() %>% 
+  summarize()
+
+  
+  
+  # Other use cases (not applicable to our data):
+  #   invasion_stage %<>% mutate(description = case_when(
+  #     raw_status == "A" ~ "casual",
+  #     raw_status == "A*" ~ "casual",
+  #     raw_status == "N" ~ "established"
+  #   ))
+  # 
+  # distribution %<>% 
+  #   mutate(Flanders = case_when(
+  #     raw_presence_fl == "X" & (is.na(raw_presence_br) | raw_presence_br == "?") & (is.na(raw_presence_wa) | raw_presence_wa == "?") ~ "S",
+  #     raw_presence_fl == "?" ~ "?",
+  #     is.na(raw_presence_fl) ~ "NA",
+  #     TRUE ~ "M")) %>%
+  #   mutate(Brussels = case_when(
+  #     (is.na(raw_presence_fl) | raw_presence_fl == "?") & raw_presence_br == "X" & (is.na(raw_presence_wa) | raw_presence_wa == "?") ~ "S",
+  #     raw_presence_br == "?" ~ "?",
+  #     is.na(raw_presence_br) ~ "NA",
+  #     TRUE ~ "M")) %>%
+  #   mutate(Wallonia = case_when(
+  #     (is.na(raw_presence_fl) | raw_presence_fl == "?") & (is.na(raw_presence_br) | raw_presence_br == "?") & raw_presence_wa == "X" ~ "S",
+  #     raw_presence_wa == "?" ~ "?",
+  #     is.na(raw_presence_wa) ~ "NA",
+  #     TRUE ~ "M")) %>%
+  #   mutate(Belgium = case_when(
+  #     raw_presence_fl == "X" | raw_presence_br == "X" | raw_presence_wa == "X" ~ "S", # One is "X"
+  #     raw_presence_fl == "?" | raw_presence_br == "?" | raw_presence_wa == "?" ~ "?" # One is "?"
+  #   ))  
+  
+  
+  
+
+# Remove rawdata cols -----------------------------------------------------
+
+taxon %<>% select(-starts_with("raw_"))  
+
+head(taxon)  
+
+
+# save file ---------------------------------------------------------------
+
+#dwc_taxon_file = "../data/processed/taxon.csv"
+
+#write.csv(taxon, file = dwc_taxon_file, na = "", row.names = FALSE, fileEncoding = "UTF-8")
+
+```
+
+
+
+<script src="https://hypothes.is/embed.js" async></script>
