@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, echo=FALSE}
 htmltools::img(src = knitr::image_uri("C:\\Users\\matthew.grainger\\OneDrive - NINA\\My Pictures\\logo%20LNEDN%20txt%20under%20liten.png"), 
                alt = 'logo', 
-               style = 'position:absolute; top:0; right:0; padding:1px;width:300px; height:200px')
+               style = 'position:absolute; top:0; right:0; padding:18px;width:350px; height:200px')
 ```
 
 
@@ -23,6 +23,8 @@ htmltools::img(src = knitr::image_uri("C:\\Users\\matthew.grainger\\OneDrive - N
 To develop tools to facilitate **FAIR** data curation (*see FAIR data standards: Findable, Accessible, Interoperable, Reusable*) for biodiversity focused researchers.   
 
 ### Broad objectives
+
+A major barrier to data in a **FAIR** way is the time consuming work of standardizing and documenting data. We will develop a suite of tools aimed at lowering the barrier for data documentation and mapping.
 
 **Findable** data requires effective and standardised machine and human readible metadata. To achieve this we will:
 
@@ -39,14 +41,10 @@ To develop tools to facilitate **FAIR** data curation (*see FAIR data standards:
   + Facilitate the interaction and exploration of data in the Darwin Core Archive format (see: https://github.com/LivingNorway/DwCaViewer)
   
   
-## Team
-
-### Core team 
-Erlend Nilsen; Anders Finstad; Matt Grainger; Caitlin Mandeville; Hendrik Bernsten
 
 ### Core repositories
 
-* Data legacy - https://github.com/LivingNorway/LegacyDataPackage
+* Data legacy - https://github.com/LivingNorway/TheDataPackage
 * Data capture - see: https://github.com/LivingNorway/data-capture
 * Darwin Core converter - https://github.com/LivingNorway/DwCaViewer
 * Darwin Core viewer - https://github.com/LivingNorway/DwCaViewer
@@ -57,6 +55,8 @@ Erlend Nilsen; Anders Finstad; Matt Grainger; Caitlin Mandeville; Hendrik Bernst
 # Specific tasks
 
 ***
+
+R packages and R functions already exist to facilitate many of areas of functionality which this project requires to be sucessful (see some examples below). We need to decide if these packages should be imported as dependancies in to Living Norway R package(s) or to recreate the functions to better suit our needs. Packages that are well-maintained and on CRAN are more likely to be stable and therefore, if the functionality is sufficient for our needs, we should use them as dependancies. If the package is not well maintained then their is a danger of legacy effects further in to the future which could impact on the utility of any Livin Norway packages. So the first task to formally assess each package and function and decide if they will be (1) of direct use to our project and  (2) appear to be well maintained and stable (e.g. they are on CRAN). 
   
 ```{r collapsible tree, echo=FALSE, message=FALSE, warning=FALSE}
 LivingNorwayR<- data.frame(Major_task=c("Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","DwC_mapper","DwC_mapper","DwC_mapper","DwC_mapper","DwC_mapper","DwC_mapper","DwC_Viewer","DwC_Viewer","DwC_Viewer","DwC_Viewer","DwC_Viewer"), Task=c("Task1.1","Task1.2","Task1.3","Task1.4","Task1.5","Task1.6","Task1.7","Task1.8","Task2.1","Task2.2","Task2.3","Task2.4","Task2.5","Task2.6","Task2.7","Task2.8","Task3.1","Task3.2","Task3.3","Task3.4","Task3.5","Task3.6","Task4.1","Task4.2","Task4.3","Task4.4","Task4.5"), Task_title=c("Identify minimum metadata requirements","Identify typology of data entry forms","Design Rmarkdown templates for data entry","Design Rshiny App for data entry ","R functions for data validation","Workshop with NINA researchers to beta test","Refinements based on beta testing with NINA researchers","Develop vignettes","Identify minimum metadata requirements","Define datafile structure","R functions to create datafile structure","Design Rmarkdown templates for metadata entry","Design Rshiny App for metadata entry ","Workshop with NINA datasets to beta test","Refinements based on beta testing ","Develop vignettes","Identitfy DwC terms for common use cases","R functions for reshaping raw data ","R functions to map raw data to DwC","Rshiny App to aid mapping","R functions for converting raw data to DwC zipped file","Develop vignettes","Identitfy common data viz requirements","Design Rshiny App to read DwC file and view with customisable viz options","Demonstration version shown at LN seminar in June","Refinements based on feedback","Develop vignettes"))
@@ -78,27 +78,94 @@ collapsibleTree(
 
 ***
 
-# Timeline TBC
+# Timeline (scroll mouse to zoom in/out)
 
 ***
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
-# library(timevis)
-# 
-# data <- data.frame(
-#   id      = 1:7,
+LivingNorwayR$start<-c("2020-03-23","2020-03-23", "2020-07-20", "2020-08-10", "2020-09-14", "2020-09-21", "2020-10-05", "2020-11-23","2020-03-23","2020-03-23","2020-03-23","2020-05-04", "2020-08-31", "2020-10-12","2020-11-16","2020-12-14","2020-03-30", "2020-04-06","2020-05-25","2020-10-05","2020-11-02","2020-12-02","2020-03-16","2020-05-20", "2020-06-09","2020-08-31","2020-09-21")
+
+library(lubridate)
+library(bizdays)
+create.calendar(name="mycal", weekdays=c('saturday', 'sunday'))
+LivingNorwayR$end<-bizdays::offset(LivingNorwayR$start, 6, "mycal")
+LivingNorwayR$content<-LivingNorwayR$Task_title
+library(timevis)
+
+#data <- data.frame(
+
 #   content = c("Data legacy", "Data capture",
 #               "Darwin converter","Darwin converter", "Darwin viewer","Darwin viewer", "Living Norway Workshop"),
 #   start   = c("2020-03-09", "2020-03-09",
 #               "2020-03-09", "2020-04-06", "2020-08-10", "2020-08-10","2020-06-08"),
 #   end     = c(NA, NA, "2020-05-11", "2020-06-06","2020-10-31", NA,NA)
 # )
+#
+
+# timevis(data = data.frame(
+#   start =LivingNorwayR$start,
+#   end= LivingNorwayR$end,
+#   content = LivingNorwayR$Task_title,
+#   group = LivingNorwayR$Major_task,
+#   groups = data.frame(id = LivingNorwayR$Major_task, content = LivingNorwayR$Major_task),
+#   title=LivingNorwayR$Major_task))
+#   
 # 
-# timevis(data)
+# data = data.frame(
+#   start =LivingNorwayR$start,
+#   end= LivingNorwayR$end,
+#   content = LivingNorwayR$Task_title,
+#   title=LivingNorwayR$Major_task,
+#   className = LivingNorwayR$Major_task)
+
+## the data argument: three items
+dtable <- data.frame(
+  group=LivingNorwayR$Major_task,
+  start =LivingNorwayR$start,
+  end= LivingNorwayR$end,
+  content = LivingNorwayR$Task_title,
+  title=LivingNorwayR$Major_task,
+  className = LivingNorwayR$Major_task)
+  
+## the groups argument: three groups.  re-use 'id' as 'className'
+## (could be different)
+gtable <- data.frame(
+  id = LivingNorwayR$Major_task,
+  content = LivingNorwayR$Major_task,
+  title = LivingNorwayR$Major_task, 
+  className = LivingNorwayR$Major_task)
+
+
+styles <- "
+.vis-item.Raw_data_capture { background-color: LightGreen; }
+.vis-item.Legacy_data_capture { background-color: Khaki; }
+.vis-item.DwC_mapper { background-color: MediumSeaGreen; }
+.vis-item.DwC_Viewer { background-color: Red; }"
+
+library(htmltools)
+
+## create visualization object
+tv <- timevis(data=dtable, groups=gtable)
+
+
+## the object returned by timevis() is of class c("timevis",
+## "htmlwidget").  one can run htmltools methods on it.  so, add our
+## styles to tv.
+tv <- tagList(list(tags$head(tags$style(styles, type="text/css")), tv))
+
+## (after this, tv is of class c("shiny.tag.list", "list"))
+
+tv
+#tv  
+#timevis(LivingNorwayR, group=data.frame(id=LivingNorwayR$Task, content=LivingNorwayR$Task_title))
 ```
 
+```{r html version of timeline, echo=FALSE}
+html_print(tv)                          #
+
+```
   
   
 
@@ -110,13 +177,12 @@ collapsibleTree(
 ***
 
 
-
 # Mapping to Darwin Core
 
 There have been several attempts to use r to map to and read from Darwin core format (e.g. https://github.com/inbo/dwc-in-R; https://ropensci.org/technotes/2016/12/23/finch-release/). Using these as a basis we can build functions to ensure automation (or reduce the need for coding knowledge as much as possible). 
 
 
-## Example from https://inbo.github.io/dwc-in-R/dwc-mapping.html 
+### Example from https://inbo.github.io/dwc-in-R/dwc-mapping.html 
 
 A raw data file of a checklist of non-native freshwater fish species in Belgium is mapped to Darwin core variables using predominately the tidyverse, magrittr, and janitor packages.  
 
@@ -275,4 +341,29 @@ head(taxon)
 
 
 
+# Viewing EML files in Human readable form
+
+### Example from https://ropensci.org/blog/2017/08/01/emldown/
+
+```{r EML viewing}
+library("emldown")
+library(tidyverse)
+library(EML)
+#vignette(package="EML")
+
+render_eml(system.file("extdata", "hampton_underice.xml", package = "emldown"))
+```
+
+# Automate metadata capture
+
+### Example from https://github.com/annakrystalli/metadatar
+
+```{r metadata capture}
+library(gapminder)
+library(metadatar)
+meta_shell <- mt_create_meta_shell(gapminder)
+knitr::kable(meta_shell)
+```
+
 <script src="https://hypothes.is/embed.js" async></script>
+
