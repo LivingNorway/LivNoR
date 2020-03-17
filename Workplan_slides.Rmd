@@ -1,0 +1,75 @@
+---
+title: "Living Norway R package(s)"
+author: "Matt"
+date: "17 3 2020"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Agenda
+
+- Quick overview of this part of the Living Norway project – broad aims and vision 
+- Package or packages? Should we aim for one super-package (or something along of lines of tidyverse a multiverse package) or 2, 3, or 4 stand-alone packages? 
+- Identify and look at some of the other packages that we have found that do some of the functionality that Living Norway needs.
+  * Do these packages warrant being dependencies or should we replicate the functions and adapt to our own uses (and then send pull requests to the original packages if warranted).
+  * What criteria should we use to decide when each of these approaches (dependency or adaptation) are appropriate?
+- Task list – agree on broad tasks. 
+  * We can discuss these; in particular: the workshop ideas and some of the early stage conceptual developments.
+- Agree on broad timeline and identify important milestones
+- Any other comments
+
+## Overview
+
+
+```{r, echo=FALSE, fig.cap="", out.width = '50%', fig.align='center'}
+knitr::include_graphics("C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/logo1.png")
+```
+
+## Package or packages
+
+```{r collapsible tree, echo=FALSE, message=FALSE, warning=FALSE}
+LivingNorwayR<- data.frame(Major_task=c("Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Raw_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","Legacy_data_capture","DwC_mapper","DwC_mapper","DwC_mapper","DwC_mapper","DwC_mapper","DwC_mapper","DwC_Viewer","DwC_Viewer","DwC_Viewer","DwC_Viewer","DwC_Viewer"), Task=c("Task1.1","Task1.2","Task1.3","Task1.4","Task1.5","Task1.6","Task1.7","Task1.8","Task2.1","Task2.2","Task2.3","Task2.4","Task2.5","Task2.6","Task2.7","Task2.8","Task3.1","Task3.2","Task3.3","Task3.4","Task3.5","Task3.6","Task4.1","Task4.2","Task4.3","Task4.4","Task4.5"), Task_title=c("Identify minimum metadata requirements","Identify typology of data entry forms","Design Rmarkdown templates for data entry","Design Rshiny App for data entry ","R functions for data validation","Workshop with NINA researchers to beta test","Refinements based on beta testing with NINA researchers","Develop vignettes","Identify minimum metadata requirements","Define datafile structure","R functions to create datafile structure","Design Rmarkdown templates for metadata entry","Design Rshiny App for metadata entry ","Workshop with NINA datasets to beta test","Refinements based on beta testing ","Develop vignettes","Identitfy DwC terms for common use cases","R functions for reshaping raw data ","R functions to map raw data to DwC","Rshiny App to aid mapping","R functions for converting raw data to DwC zipped file","Develop vignettes","Identitfy common data viz requirements","Design Rshiny App to read DwC file and view with customisable viz options","Demonstration version shown at LN seminar in June","Refinements based on feedback","Develop vignettes"))
+
+#editData::editData(LivingNorwayR)
+
+library(collapsibleTree)
+collapsibleTree(
+  LivingNorwayR,
+  hierarchy = c("Major_task", "Task", "Task_title"),
+  width = 800,
+  zoomable = FALSE
+)
+
+
+
+```
+
+
+
+## Look at some other packages
+
+- Do these packages warrant being dependencies or should we replicate the functions and adapt to our own uses (and then send pull requests to the original packages if warranted).
+
+- What criteria should we use to decide when each of these approaches (dependency or adaptation) are appropriate?
+  
+-**I propose we write a CRAN Task view for EML with the focus on achieving Living Norways aims**
+
+## Task list
+
+```{r, echo=FALSE}
+collapsibleTree(
+  LivingNorwayR,
+  hierarchy = c("Major_task", "Task", "Task_title"),
+  width = 800,
+  zoomable = FALSE
+)
+
+
+
+```
+
+
+
