@@ -1,0 +1,177 @@
+---
+title: "EML R package overview"
+author: "Matt"
+date: "6 4 2020"
+output: html_document
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(knitr.duplicate.label = "allow")
+
+```
+
+
+```{r libraries, include=FALSE, message=FALSE, warning=FALSE}
+#CRAN (25 documents 7 packages)
+library(EML)
+library(emld)
+library(emldown)
+library(RNeXML)
+library(datapack)
+library(rbefdata)
+library(geometa)
+
+#GitHub (15 repositories, 6 R language)
+
+#devtools::install_github("isteves/dataspice")#fails
+#devtools::install_github("cboettig/eml2")#fails
+#devtools::install_github("earnaud/MetaShARK-v2", dependencies=TRUE)
+#devtools::install_github("atn38/MetaInbase", dependencies=TRUE)
+#devtools::install_github("EDIorg/EMLassemblyline")
+#devtools::install_github("BLE-LTER/MetaEgress")
+
+library(MetaEgress)
+library(EMLassemblyline)
+library(MetaInbase)
+library(MetaShARK)
+
+```
+
+# R packages that interact with EML 
+
+## Methods
+
+We searched for R packages on CRAN (The Comprehensive R Archive Network - https://cran.r-project.org/) using the search function which is provided by Google. We used the search term "Ecological Metadata Language site:r-project.org". We repeated the search for "Ecological Metadata Language" on GitHub and identified repositories which used the R langauge. We identified all packages returned through our search that were on CRAN or on GitHub and that consisted of functions that are aimed at interacting (either reading, writing or viewing) with the Ecological Metadata Langauge (EML).
+
+## Results
+
+The search on Google (via CRAN) returned 25 hits. Seven of these were R packages. The search on GitHub returned 15 repositories of which 6 were in the R language. Two of these returned errors when we attempted to download them in RStudio using the devtools::install_github() function. 
+We identifed 11 R packages (7 from CRAN and 4 from GitHub) that were active and explicitly stated that functions were used for interacting (either reading, writing or viewing) Ecological Metadata Langauge (EML). 
+
+```{r open reports, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+
+library(pkgnet)
+report1 <- CreatePackageReport(pkg_name = "EML", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/EML.html")
+
+report2 <- CreatePackageReport(pkg_name = "emld", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/emld.html")
+
+report3 <- CreatePackageReport(pkg_name = "emldown",
+                               report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/emldown.html")
+
+report4 <- CreatePackageReport(pkg_name = "RNeXML",
+                               report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/RNeXML.html")
+report5 <- CreatePackageReport(pkg_name = "datapack", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/datapack.html")
+report6 <- CreatePackageReport(pkg_name = "rbefdata",
+                               report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/rbefdata.html")
+report7 <- CreatePackageReport(pkg_name = "geometa",
+                               report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/geometa.html")
+report8 <- CreatePackageReport(pkg_name = "MetaEgress",report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/MetaEgress.html")
+report9 <- CreatePackageReport(pkg_name = "EMLassemblyline"
+                               , report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/EMLassemblyline.html")
+report10 <- CreatePackageReport(pkg_name = "MetaInbase", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/MetaInbase.html")#No dependancies
+report11 <- CreatePackageReport(pkg_name = "MetaShARK",, report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/MetaShARK.html")
+
+```
+
+
+### EML Package
+
+
+```{r EML}
+report1$SummaryReporter$get_summary_view()
+
+
+```
+
+
+### emld package
+
+
+
+```{r emld}
+report2$SummaryReporter$get_summary_view()
+
+
+```
+
+### emldown package
+
+
+```{r emldown}
+report3$SummaryReporter$get_summary_view()
+
+
+```
+
+### RNeXML package
+
+```{r RNeXML}
+report4$SummaryReporter$get_summary_view()
+
+
+```
+
+### datapack package
+
+
+```{r datapack}
+report5$SummaryReporter$get_summary_view()
+
+
+```
+
+### rbefdata package
+
+
+```{r rbefdata}
+report6$SummaryReporter$get_summary_view()
+
+
+```
+
+### geometa package
+
+
+```{r geometa}
+report7$SummaryReporter$get_summary_view()
+
+
+```
+
+### MetaEgress package
+
+
+```{r MetaEgress}
+report8$SummaryReporter$get_summary_view()
+
+
+```
+
+### EMLassemblyline package
+
+
+```{r EMLassembly}
+report9$SummaryReporter$get_summary_view()
+
+
+```
+
+### MetaInbase package
+
+
+```{r MetaIn}
+report10$SummaryReporter$get_summary_view()
+
+
+```
+
+## MetaShARK package
+
+
+```{r MetaShARK}
+report11$SummaryReporter$get_summary_view()
+
+
+```
+
