@@ -3,6 +3,7 @@ title: "EML R package overview"
 author: "Matt"
 date: "6 4 2020"
 output: html_document
+bibliography: bibliography.bib
 ---
 
 ```{r setup, echo=FALSE}
@@ -11,9 +12,14 @@ options(knitr.duplicate.label = "allow")
 
 ```
 
+****
+*This is a "Living Document" which means that it will be updated periodically and that anyone can contribute to the document. If you wish to contribute please use a GitHub pull request at the https://github.com/LivingNorway/LivNoR repository*
+
+****
 
 ```{r libraries, include=FALSE, message=FALSE, warning=FALSE}
 #CRAN (25 documents 7 packages)
+library(tidyverse)
 library(EML)
 library(emld)
 library(emldown)
@@ -40,6 +46,20 @@ library(MetaShARK)
 
 # R packages that interact with EML 
 
+## Introduction
+
+EML (Ecological Metadata Langauage; [@Ecological Metadata Language version 2.2.0]) is a version of the machine and human readable XML (Extensible Markup Language) which is designed to facilitate data documentation (i.e. metadata) to ease open data and sharing. EML consists of "modules" that allow the description of data attributes (e.g. spatial, temporal, taxonomic extent).
+
+GBIF (the Global Biodiversity Information Facility), which is an international network and research infrastructure, provides open access to data about biodiversity. The GBIF metadata profile is based on EML and as such anyone interacting with GBIF needs to be able to read, write or visualise data in the EML format. 
+
+Writing directly in EML can be a technical barrier to many researchers who, in ecology, may only have experience in the R langauge which has a very different syntax and data structure. 
+### Aim
+To identify R packages and functions that can read, write or visualise data in the EML format 
+
+#### Objectives
+1) To review the available packages on CRAN and on GitHub that have functions to interact with EML
+2) To identify the main functions from these packages that allow reading, writing and visualising data in EML format
+
 ## Methods
 
 We searched for R packages on CRAN (The Comprehensive R Archive Network - https://cran.r-project.org/) using the search function which is provided by Google. We used the search term "Ecological Metadata Language site:r-project.org". We repeated the search for "Ecological Metadata Language" on GitHub and identified repositories which used the R langauge. We identified all packages returned through our search that were on CRAN or on GitHub and that consisted of functions that are aimed at interacting (either reading, writing or viewing) with the Ecological Metadata Langauge (EML).
@@ -49,40 +69,72 @@ We searched for R packages on CRAN (The Comprehensive R Archive Network - https:
 The search on Google (via CRAN) returned 25 hits. Seven of these were R packages. The search on GitHub returned 15 repositories of which 6 were in the R language. Two of these returned errors when we attempted to download them in RStudio using the devtools::install_github() function. 
 We identifed 11 R packages (7 from CRAN and 4 from GitHub) that were active and explicitly stated that functions were used for interacting (either reading, writing or viewing) Ecological Metadata Langauge (EML). 
 
-```{r open reports, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+```{r table of packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(knitr)
+tb<-data.frame("Package"=c("EML","emld", "emldown", "RNeXML", "datapack", "rbefdata", "geometa", "MetaEgress", "EMLassemblyline", "MetaInbase", "MetaShARK"), "Package_description"=c(packageDescription(pkg = "EML")$Description, packageDescription(pkg = "emld")$Description, packageDescription(pkg = "emldown")$Description, packageDescription(pkg = "RNeXML")$Description,packageDescription(pkg = "datapack")$Description,packageDescription(pkg = "rbefdata")$Description,packageDescription(pkg = "geometa")$Description, packageDescription(pkg = "MetaEgress")$Description, packageDescription(pkg = "EMLassemblyline")$Description, packageDescription(pkg = "MetaInbase")$Description,packageDescription(pkg = "MetaShARK")$Description))
 
-library(pkgnet)
-report1 <- CreatePackageReport(pkg_name = "EML", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/EML.html")
-
-report2 <- CreatePackageReport(pkg_name = "emld", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/emld.html")
-
-report3 <- CreatePackageReport(pkg_name = "emldown",
-                               report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/emldown.html")
-
-report4 <- CreatePackageReport(pkg_name = "RNeXML",
-                               report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/RNeXML.html")
-report5 <- CreatePackageReport(pkg_name = "datapack", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/datapack.html")
-report6 <- CreatePackageReport(pkg_name = "rbefdata",
-                               report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/rbefdata.html")
-report7 <- CreatePackageReport(pkg_name = "geometa",
-                               report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/geometa.html")
-report8 <- CreatePackageReport(pkg_name = "MetaEgress",report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/MetaEgress.html")
-report9 <- CreatePackageReport(pkg_name = "EMLassemblyline"
-                               , report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/EMLassemblyline.html")
-report10 <- CreatePackageReport(pkg_name = "MetaInbase", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/MetaInbase.html")#No dependancies
-report11 <- CreatePackageReport(pkg_name = "MetaShARK",, report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/MetaShARK.html")
-
+tb %>% 
+  mutate(Package_description=gsub("\n", "", Package_description )) %>% knitr::kable()
 ```
 
 
-### EML Package
 
 
-```{r EML}
-report1$SummaryReporter$get_summary_view()
+```{r}
+# library(collapsibleTree)
+# eml<-data.frame("Level1"=c("dataset",
+#                                     "creator",
+#                                     "title",
+#                                     "publisher",
+#                                     "pubDate",
+#                                     "keywords",
+#                                     "abstract",
+#                                     "intellectualRights",
+#                                     "contact",
+#                                     "methods",
+#                                     "coverage",
+#                                     "coverage",
+#                                     "coverage",
+#                                     "dataTable",
+#                                     "dataTable",
+#                                     "dataTable",
+#                                     "dataTable"), "Level2"=c(NA,
+#                                                            NA,
+#                                                            NA,
+#                                                            NA,
+#                                                            NA,
+#                                                            NA,
+#                                                            NA,
+#                                                            NA,
+#                                                            NA,
+#                                                            NA,
+#                                                            "geographicCoverage",
+#                                                            "temporalCoverage",
+#                                                            "taxonomicCoverage",
+#                                                            "entityName",
+#                                                            "entityDescription",
+#                                                            "physical",
+#                                                            "attributeList"))
+#collapsibleTree(eml, hierarchy =c("Level1", "Level2"))
+```
+
+
+
+#### Reading EML
+
+The read_eml() function reads eml files in to the R session. eml_get() allows you to access the attributes of the eml file. 
+
+
+```{r}
+f <- system.file("tests", emld::eml_version(), "eml-datasetWithUnits.xml", package = "emld")
+eml <- read_eml(f)
+eml_get(eml, "physical")
+eml_get(eml,"dataset")
+get_attributes(eml$dataset$dataTable$attributeList)
 
 
 ```
+
 
 
 ### emld package
@@ -90,7 +142,7 @@ report1$SummaryReporter$get_summary_view()
 
 
 ```{r emld}
-report2$SummaryReporter$get_summary_view()
+#report2$SummaryReporter$get_summary_view()
 
 
 ```
@@ -99,7 +151,7 @@ report2$SummaryReporter$get_summary_view()
 
 
 ```{r emldown}
-report3$SummaryReporter$get_summary_view()
+#report3$SummaryReporter$get_summary_view()
 
 
 ```
@@ -107,7 +159,7 @@ report3$SummaryReporter$get_summary_view()
 ### RNeXML package
 
 ```{r RNeXML}
-report4$SummaryReporter$get_summary_view()
+#report4$SummaryReporter$get_summary_view()
 
 
 ```
@@ -116,7 +168,7 @@ report4$SummaryReporter$get_summary_view()
 
 
 ```{r datapack}
-report5$SummaryReporter$get_summary_view()
+#report5$SummaryReporter$get_summary_view()
 
 
 ```
@@ -125,7 +177,7 @@ report5$SummaryReporter$get_summary_view()
 
 
 ```{r rbefdata}
-report6$SummaryReporter$get_summary_view()
+#report6$SummaryReporter$get_summary_view()
 
 
 ```
@@ -134,7 +186,7 @@ report6$SummaryReporter$get_summary_view()
 
 
 ```{r geometa}
-report7$SummaryReporter$get_summary_view()
+#report7$SummaryReporter$get_summary_view()
 
 
 ```
@@ -143,7 +195,7 @@ report7$SummaryReporter$get_summary_view()
 
 
 ```{r MetaEgress}
-report8$SummaryReporter$get_summary_view()
+#report8$SummaryReporter$get_summary_view()
 
 
 ```
@@ -152,7 +204,7 @@ report8$SummaryReporter$get_summary_view()
 
 
 ```{r EMLassembly}
-report9$SummaryReporter$get_summary_view()
+#report9$SummaryReporter$get_summary_view()
 
 
 ```
@@ -161,7 +213,7 @@ report9$SummaryReporter$get_summary_view()
 
 
 ```{r MetaIn}
-report10$SummaryReporter$get_summary_view()
+#report10$SummaryReporter$get_summary_view()
 
 
 ```
@@ -170,8 +222,112 @@ report10$SummaryReporter$get_summary_view()
 
 
 ```{r MetaShARK}
-report11$SummaryReporter$get_summary_view()
+#report11$SummaryReporter$get_summary_view()
 
 
 ```
 
+
+
+# Dependancies
+
+```{r}
+library(tidyverse)
+# 
+# length(report1$DependencyReporter$nodes$node)#48
+# length(report2$DependencyReporter$nodes$node)#13
+# length(report3$DependencyReporter$nodes$node)#79
+# length(report4$DependencyReporter$nodes$node)#49
+# length(report5$DependencyReporter$nodes$node)#39
+# length(report6$DependencyReporter$nodes$node)#17
+# length(report7$DependencyReporter$nodes$node)#16
+# length(report8$DependencyReporter$nodes$node)#58
+# length(report9$DependencyReporter$nodes$node)#103
+# #length(report10$DependencyReporter$nodes$node)#No Dependency
+# length(report11$DependencyReporter$nodes$node)#170
+# 
+# PkgName=c(rep("EML",48), rep("emld",13), rep("emldown",79), rep("RNeXML", 49),
+#           rep("datapack", 39), rep("rbefdata", 17), rep("geometa", 16), rep("MetaEgress", 58), 
+#           rep("EMLassemblyline", 103), rep("MetaShARK", 170))
+# 
+# Dependency=c(report1$DependencyReporter$nodes$node,
+#                   report2$DependencyReporter$nodes$node,
+#                   report3$DependencyReporter$nodes$node,
+#                   report4$DependencyReporter$nodes$node,
+#                   report5$DependencyReporter$nodes$node,
+#                   report6$DependencyReporter$nodes$node,
+#                   report7$DependencyReporter$nodes$node,
+#                   report8$DependencyReporter$nodes$node,
+#              report9$DependencyReporter$nodes$node,
+#              #report10$DependencyReporter$nodes$node,
+#              report11$DependencyReporter$nodes$node)
+# 
+# dtab=data.frame(PkgName,Dependency)
+# dtab$PkgName<-as.character(dtab$PkgName)
+# dtab$Dependency<-as.character(dtab$Dependency)
+# 
+# 
+# dtab=dtab %>% 
+#   filter(!PkgName==Dependency)
+# dtab %>% 
+#   select(Dependency) %>% 
+#   group_by(Dependency) %>% 
+#   tally() %>% 
+#   arrange(desc(n)) %>% 
+#   top_n(.,15) %>% 
+#   ggplot(aes(reorder(Dependency,n),n, fill="red"))+
+#   geom_bar(stat="Identity")+
+#   coord_flip()
+# 
+
+```
+
+
+```{r open reports, echo=FALSE, warning=FALSE, message=FALSE, include=FALSE}
+# 
+# library(pkgnet)
+# report1 <- CreatePackageReport(pkg_name = "EML", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/EML.html")
+# 
+# report2 <- CreatePackageReport(pkg_name = "emld", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/emld.html")
+# 
+# report3 <- CreatePackageReport(pkg_name = "emldown",
+#                                report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/emldown.html")
+# 
+# report4 <- CreatePackageReport(pkg_name = "RNeXML",
+#                                report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/RNeXML.html")
+# report5 <- CreatePackageReport(pkg_name = "datapack", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/datapack.html")
+# report6 <- CreatePackageReport(pkg_name = "rbefdata",
+#                                report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/rbefdata.html")
+# report7 <- CreatePackageReport(pkg_name = "geometa",
+#                                report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/geometa.html")
+# report8 <- CreatePackageReport(pkg_name = "MetaEgress",report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/MetaEgress.html")
+# report9 <- CreatePackageReport(pkg_name = "EMLassemblyline"
+#                                , report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/EMLassemblyline.html")
+# report10 <- CreatePackageReport(pkg_name = "MetaInbase", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/MetaInbase.html")#No dependancies
+# report11 <- CreatePackageReport(pkg_name = "MetaShARK", report_path ="C:/Users/matthew.grainger/Documents/Projects_in_development/LivNoR/Pkgnet_out/MetaShARK.html")
+# 
+
+```
+
+
+### EML Package
+
+
+```{r EML}
+# report1$SummaryReporter$get_summary_view()
+
+
+
+
+```
+
+
+# References {-}
+
+
+
+<div id="refs"></div>
+
+
+
+\newpage 
