@@ -364,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">EML R package overview</h1>
 <h4 class="author">Matt</h4>
-<h4 class="date">6 4 2020</h4>
+<h4 class="date">09 21, 2020</h4>
 
 </div>
 
@@ -376,15 +376,19 @@ summary {
 <h1>R packages that interact with EML</h1>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>EML (Ecological Metadata Langauage; <span class="citation">(<span class="citeproc-not-found" data-reference-id="Ecological"><strong>???</strong></span> Metadata Language version 2.2.0)</span>) is a version of the machine and human readable XML (Extensible Markup Language) which is designed to facilitate data documentation (i.e. metadata) to ease open data and sharing. EML consists of “modules” that allow the description of data attributes (e.g. spatial, temporal, taxonomic extent).</p>
+<p>EML (Ecological Metadata Langauage; <span class="citation">(Jones et al. 2019)</span>) is a version of the machine and human readable XML (Extensible Markup Language) which is designed to facilitate data documentation (i.e. metadata) to ease open data and sharing. EML consists of “modules” that allow the description of data attributes (e.g. spatial, temporal, taxonomic extent).</p>
 <p>GBIF (the Global Biodiversity Information Facility), which is an international network and research infrastructure, provides open access to data about biodiversity. The GBIF metadata profile is based on EML and as such anyone interacting with GBIF needs to be able to read, write or visualise data in the EML format.</p>
-<p>Writing directly in EML can be a technical barrier to many researchers who, in ecology, may only have experience in the R langauge which has a very different syntax and data structure. ### Aim To identify R packages and functions that can read, write or visualise data in the EML format</p>
+<p>Writing directly in EML can be a technical barrier to many researchers who, in ecology, may only have experience in the R langauge which has a very different syntax and data structure. Several R packages have functions to read, write or interact with EML files and here we aim to identify those that will be useful for researchers working with ecological data.</p>
+<div id="aim" class="section level3">
+<h3>Aim</h3>
+<p>To identify R packages and functions that can read, write or interact/visualise data in the EML format</p>
 <div id="objectives" class="section level4">
 <h4>Objectives</h4>
 <ol style="list-style-type: decimal">
 <li>To review the available packages on CRAN and on GitHub that have functions to interact with EML</li>
 <li>To identify the main functions from these packages that allow reading, writing and visualising data in EML format</li>
 </ol>
+</div>
 </div>
 </div>
 <div id="methods" class="section level2">
@@ -448,340 +452,65 @@ summary {
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># library(collapsibleTree)
-# eml&lt;-data.frame(&quot;Level1&quot;=c(&quot;dataset&quot;,
-#                                     &quot;creator&quot;,
-#                                     &quot;title&quot;,
-#                                     &quot;publisher&quot;,
-#                                     &quot;pubDate&quot;,
-#                                     &quot;keywords&quot;,
-#                                     &quot;abstract&quot;,
-#                                     &quot;intellectualRights&quot;,
-#                                     &quot;contact&quot;,
-#                                     &quot;methods&quot;,
-#                                     &quot;coverage&quot;,
-#                                     &quot;coverage&quot;,
-#                                     &quot;coverage&quot;,
-#                                     &quot;dataTable&quot;,
-#                                     &quot;dataTable&quot;,
-#                                     &quot;dataTable&quot;,
-#                                     &quot;dataTable&quot;), &quot;Level2&quot;=c(NA,
-#                                                            NA,
-#                                                            NA,
-#                                                            NA,
-#                                                            NA,
-#                                                            NA,
-#                                                            NA,
-#                                                            NA,
-#                                                            NA,
-#                                                            NA,
-#                                                            &quot;geographicCoverage&quot;,
-#                                                            &quot;temporalCoverage&quot;,
-#                                                            &quot;taxonomicCoverage&quot;,
-#                                                            &quot;entityName&quot;,
-#                                                            &quot;entityDescription&quot;,
-#                                                            &quot;physical&quot;,
-#                                                            &quot;attributeList&quot;))
-#collapsibleTree(eml, hierarchy =c(&quot;Level1&quot;, &quot;Level2&quot;))</code></pre>
-<div id="reading-eml" class="section level4">
-<h4>Reading EML</h4>
-<p>The read_eml() function reads eml files in to the R session. eml_get() allows you to access the attributes of the eml file.</p>
+<hr />
+<div id="emld-package" class="section level4">
+<h4>emld package</h4>
+<p>The <em>emld</em> package is closely related to the EML package and its functions are heavily relied upon in the latest version of <em>EML</em>.</p>
+<p><em>emld</em> has an advantage over <em>EML</em> where there are large, highly nested EML files. It can flattern EML in to common R formats that can be manipulated in R.</p>
+<div id="read-eml" class="section level5">
+<h5>Read EML</h5>
+<pre class="r"><code># Example from https://github.com/ropensci/emld
+f &lt;- system.file(&quot;extdata/example.xml&quot;, package=&quot;emld&quot;)
+eml &lt;- emld::as_emld(f)
+eml$dataset$title</code></pre>
+<pre><code>## [1] &quot;Data from Cedar Creek LTER on productivity and species richness\n  for use in a workshop titled \&quot;An Analysis of the Relationship between\n  Productivity and Diversity using Experimental Results from the Long-Term\n  Ecological Research Network\&quot; held at NCEAS in September 1996.&quot;</code></pre>
+</div>
+<div id="write-eml" class="section level5">
+<h5>Write EML</h5>
+<p><em>emld</em> objects are nested lists so to write EML in <em>emld</em> you can create a list.</p>
+<pre class="r"><code># Example from https://github.com/ropensci/emld
+
+me &lt;- list(individualName = list(givenName = &quot;Joe&quot;, surName = &quot;Bloggs&quot;))
+
+eml &lt;- list(dataset = list(
+              title = &quot;The biggest fish in the sea&quot;,
+              contact = me,
+              creator = me),
+              system = &quot;doi&quot;,
+              packageId = &quot;10.xxx&quot;)
+
+ex.xml &lt;- tempfile(&quot;ex&quot;, fileext = &quot;.xml&quot;) # use your preferred file path
+
+as_xml(eml, ex.xml)</code></pre>
+<p><em>emld::as_xml()</em> reorders the list if neccessary to ensure that it matches the EML required format. You can use <em>emld::eml_validate()</em> to check that the EML has been written correctly and is a valid EML file.</p>
+<pre class="r"><code>eml_validate(ex.xml)</code></pre>
+<pre><code>## [1] TRUE
+## attr(,&quot;errors&quot;)
+## character(0)</code></pre>
+</div>
+</div>
+<div id="eml-package" class="section level4">
+<h4>EML package</h4>
+<p>The <em>EML</em> package uses <em>emld</em> as a basis for many of its functions.</p>
+<div id="read-eml-1" class="section level5">
+<h5>Read EML</h5>
+<p>The read_eml() function reads eml files in to the R session.</p>
 <pre class="r"><code>f &lt;- system.file(&quot;tests&quot;, emld::eml_version(), &quot;eml-datasetWithUnits.xml&quot;, package = &quot;emld&quot;)
 eml &lt;- read_eml(f)
-eml_get(eml, &quot;physical&quot;)</code></pre>
-<pre><code>## characterEncoding: ASCII
-## dataFormat:
-##   textFormat:
-##     numHeaderLines: &#39;1&#39;
-##     attributeOrientation: column
-##     simpleDelimited:
-##       fieldDelimiter: \t
-## distribution:
-##   online:
-##     url: http://metacat.nceas.ucsb.edu/knb/servlet/metacat?action=read&amp;docid=knb.46.1
-## objectName: CDR LTER-patterns among communities.txt
-## size:
-##   unit: bytes
-##   size: &#39;1245&#39;</code></pre>
-<pre class="r"><code>eml_get(eml,&quot;dataset&quot;)</code></pre>
-<pre><code>## contact:
-## - references: clarence.lehman
-## - references: richard.inouye
-## creator:
-## - id: clarence.lehman
-##   individualName:
-##     salutation: Mr.
-##     givenName: Clarence
-##     surName: Lehman
-##   address:
-##     city: St. Paul
-##     administrativeArea: MN
-##     postalCode: 55108-6097
-##     country: USA
-##     deliveryPoint:
-##     - &quot;Department of Ecology Evolution and Behavior\n      &quot;
-##     - 100 Ecology Bldg
-##     - 1987 Upper Buford Circle
-##   phone: 612-624-6731
-##   electronicMailAddress: lehman@lter.umn.edu
-## - id: richard.inouye
-##   individualName:
-##     salutation: Mr.
-##     givenName: Richard
-##     surName: Inouye
-##   address:
-##     city: Pocatello
-##     administrativeArea: ID
-##     postalCode: 83209-8007
-##     country: USA
-##     deliveryPoint:
-##     - Department of Biological Science
-##     - Idaho State University
-##     - Campus Box 8007
-##   phone: 208-236-2933
-##   electronicMailAddress: inouye@lter.umn.edu
-## dataTable:
-##   id: xyz
-##   entityName: CDR LTER-patterns among communities.txt
-##   entityDescription: patterns amoung communities at CDR
-##   physical:
-##     objectName: CDR LTER-patterns among communities.txt
-##     size:
-##       unit: bytes
-##       size: &#39;1245&#39;
-##     characterEncoding: ASCII
-##     dataFormat:
-##       textFormat:
-##         numHeaderLines: &#39;1&#39;
-##         attributeOrientation: column
-##         simpleDelimited:
-##           fieldDelimiter: \t
-##     distribution:
-##       online:
-##         url: http://metacat.nceas.ucsb.edu/knb/servlet/metacat?action=read&amp;docid=knb.46.1
-##   attributeList:
-##     id: at.1
-##     attribute:
-##     - id: att.1
-##       attributeName: fld
-##       attributeLabel: Field
-##       attributeDefinition: &quot;Field where the data was collected\n        &quot;
-##       storageType: string
-##       measurementScale:
-##         nominal:
-##           nonNumericDomain:
-##             id: nd.1
-##             textDomain:
-##               definition: Valid names of fields
-##     - id: att.2
-##       attributeName: year
-##       attributeLabel: year
-##       attributeDefinition: &quot;The year the data was collected\n        &quot;
-##       storageType: gYear
-##       measurementScale:
-##         dateTime:
-##           formatString: YYYY
-##           dateTimePrecision: &#39;1&#39;
-##           dateTimeDomain:
-##             id: dd.2
-##             bounds:
-##               minimum:
-##                 exclusive: &#39;false&#39;
-##                 minimum: &#39;1944&#39;
-##     - id: att.3
-##       attributeName: sr
-##       attributeLabel: Species Richness
-##       attributeDefinition: Species richness for CDR
-##       storageType: float
-##       measurementScale:
-##         interval:
-##           unit:
-##             standardUnit: number
-##           precision: &#39;0.5&#39;
-##           numericDomain:
-##             id: nd.3
-##             numberType: real
-##             bounds:
-##               minimum:
-##                 exclusive: &#39;true&#39;
-##                 minimum: &#39;0&#39;
-##     - id: att.4
-##       attributeName: pctcov
-##       attributeLabel: percent cover
-##       attributeDefinition: &quot;The percent ground cover on the field\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             standardUnit: dimensionless
-##           precision: &#39;0.1&#39;
-##           numericDomain:
-##             id: nd.4
-##             numberType: real
-##             bounds:
-##               minimum:
-##                 exclusive: &#39;true&#39;
-##                 minimum: &#39;0&#39;
-##               maximum:
-##                 exclusive: &#39;true&#39;
-##                 maximum: 1e2
-##     - id: att.5
-##       attributeName: avesr91
-##       attributeLabel: Average Species Richness for 1991
-##       attributeDefinition: &quot;The average species richness for the field in 1991\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             standardUnit: second
-##           precision: &#39;0.1&#39;
-##           numericDomain:
-##             id: nd.5
-##             numberType: real
-##             bounds:
-##               minimum:
-##                 exclusive: &#39;true&#39;
-##                 minimum: &#39;0&#39;
-##     - id: att.6
-##       attributeName: avesr92
-##       attributeLabel: Average Species Richness for 1992
-##       attributeDefinition: &quot;The average species richness for the field in 1992\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             standardUnit: cubicFeetPerSecond
-##           precision: &#39;0.1&#39;
-##           numericDomain:
-##             references: nd.5
-##     - id: att.7
-##       attributeName: avesr93
-##       attributeLabel: Average Species Richness for 1993
-##       attributeDefinition: &quot;The average species richness for the field in 1993\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             standardUnit: cubicMeter
-##           precision: &#39;0.1&#39;
-##           numericDomain:
-##             references: nd.5
-##     - id: att.8
-##       attributeName: avesr94
-##       attributeLabel: Average Species Richness for 1994
-##       attributeDefinition: &quot;The average species richness for the field in 1994\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             standardUnit: radian
-##           precision: &#39;0.1&#39;
-##           numericDomain:
-##             references: nd.5
-##     - id: att.9
-##       attributeName: avesr95
-##       attributeLabel: Average Species Richness for 1995
-##       attributeDefinition: &quot;The average species richness for the field in 1995\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             standardUnit: meter
-##           precision: &#39;0.1&#39;
-##           numericDomain:
-##             references: nd.5
-##     - id: att.10
-##       attributeName: avesr96
-##       attributeLabel: Average Species Richness for 1996
-##       attributeDefinition: &quot;The average species richness for the field in 1996\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             standardUnit: inch
-##           precision: &#39;0.1&#39;
-##           numericDomain:
-##             references: nd.5
-##     - id: att.11
-##       attributeName: MeanSR
-##       attributeLabel: mean species richness
-##       attributeDefinition: &quot;the mean species richness from 1991 to 1996\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             standardUnit: nanogram
-##           precision: &#39;0.1&#39;
-##           numericDomain:
-##             references: nd.5
-##     - id: att.12
-##       attributeName: biomass
-##       attributeLabel: Biomass
-##       attributeDefinition: &quot;The total biomass measured in this field\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             customUnit: gramsPerSquareMeter
-##           precision: &#39;0.01&#39;
-##           numericDomain:
-##             id: nd.6
-##             numberType: real
-##             bounds:
-##               minimum:
-##                 exclusive: &#39;true&#39;
-##                 minimum: &#39;0&#39;
-##     - id: att.13
-##       attributeName: sppm2
-##       attributeLabel: Species Per Square Meter
-##       attributeDefinition: &quot;Calculated species per square meter\n        &quot;
-##       storageType: float
-##       measurementScale:
-##         ratio:
-##           unit:
-##             customUnit: speciesPerSquareMeter
-##           precision: &#39;0.01&#39;
-##           numericDomain:
-##             id: nd.7
-##             numberType: real
-##             bounds:
-##               minimum:
-##                 exclusive: &#39;true&#39;
-##                 minimum: &#39;0&#39;
-##     - id: att.14
-##       attributeName: time
-##       attributeLabel: Time
-##       attributeDefinition: &quot;The time of day for this observation, 24 hour clock\n
-##         \       &quot;
-##       storageType: time
-##       measurementScale:
-##         dateTime:
-##           formatString: hh:mm:ss.s
-##           dateTimePrecision: &#39;0.1&#39;
-##           dateTimeDomain:
-##             id: dd.3
-##             bounds:
-##               minimum:
-##                 exclusive: &#39;true&#39;
-##                 minimum: &#39;15:00:00.0&#39;
-##               maximum:
-##                 exclusive: &#39;true&#39;
-##                 maximum: &#39;19:00:00.0&#39;
-##   caseSensitive: &#39;no&#39;
-##   numberOfRecords: &#39;22&#39;
-## keywordSet:
-##   keyword:
-##   - Old field grassland
-##   - biomass
-##   - productivity
-##   - species-area
-##   - species richness
-## title: |-
-##   Data from Cedar Creek LTER on productivity and species richness
-##     for use in a workshop titled &quot;An Analysis of the Relationship between
-##     Productivity and Diversity using Experimental Results from the Long-Term
-##     Ecological Research Network&quot; held at NCEAS in September 1996.</code></pre>
-<pre class="r"><code>get_attributes(eml$dataset$dataTable$attributeList)</code></pre>
+eml$dataset$title</code></pre>
+<pre><code>## [1] &quot;Data from Cedar Creek LTER on productivity and species richness\n  for use in a workshop titled \&quot;An Analysis of the Relationship between\n  Productivity and Diversity using Experimental Results from the Long-Term\n  Ecological Research Network\&quot; held at NCEAS in September 1996.&quot;</code></pre>
+</div>
+<div id="write-eml-1" class="section level5">
+<h5>Write EML</h5>
+<p>Several functions (with the prefix <em>set_</em>) allow the user to import attributes of the dataset file (e.g. the methods) as word or Markdown documents and merge them in to a single EML file (see <a href="https://docs.ropensci.org/EML/" class="uri">https://docs.ropensci.org/EML/</a> for a detailed tutorial).</p>
+</div>
+<div id="interact-with-eml" class="section level5">
+<h5>Interact with EML</h5>
+<p><em>EML</em> has several functions (with the prefix <em>get_</em>) which allow a user to extract elements of an XML file.</p>
+<pre class="r"><code>f &lt;- system.file(&quot;tests&quot;, emld::eml_version(), 
+  &quot;eml-datasetWithAttributelevelMethods.xml&quot;, package = &quot;emld&quot;)
+eml &lt;- read_eml(f)
+get_attributes(eml$dataset$dataTable$attributeList)</code></pre>
 <pre><code>## $attributes
 ##    attributeName                    attributeLabel
 ## 1            fld                             Field
@@ -795,9 +524,7 @@ eml_get(eml, &quot;physical&quot;)</code></pre>
 ## 9        avesr95 Average Species Richness for 1995
 ## 10       avesr96 Average Species Richness for 1996
 ## 11        MeanSR             mean species richness
-## 12       biomass                           Biomass
-## 13         sppm2          Species Per Square Meter
-## 14          time                              Time
+## 12          time                              Time
 ##                                              attributeDefinition storageType
 ## 1                   Field where the data was collected\n              string
 ## 2                      The year the data was collected\n               gYear
@@ -810,9 +537,7 @@ eml_get(eml, &quot;physical&quot;)</code></pre>
 ## 9   The average species richness for the field in 1995\n               float
 ## 10  The average species richness for the field in 1996\n               float
 ## 11         the mean species richness from 1991 to 1996\n               float
-## 12            The total biomass measured in this field\n               float
-## 13                 Calculated species per square meter\n               float
-## 14 The time of day for this observation, 24 hour clock\n                time
+## 12 The time of day for this observation, 24 hour clock\n                time
 ##               definition measurementScale         domain formatString
 ## 1  Valid names of fields          nominal     textDomain         &lt;NA&gt;
 ## 2                   &lt;NA&gt;         dateTime dateTimeDomain         YYYY
@@ -825,143 +550,76 @@ eml_get(eml, &quot;physical&quot;)</code></pre>
 ## 9                   &lt;NA&gt;            ratio  numericDomain         &lt;NA&gt;
 ## 10                  &lt;NA&gt;            ratio  numericDomain         &lt;NA&gt;
 ## 11                  &lt;NA&gt;            ratio  numericDomain         &lt;NA&gt;
-## 12                  &lt;NA&gt;            ratio  numericDomain         &lt;NA&gt;
-## 13                  &lt;NA&gt;            ratio  numericDomain         &lt;NA&gt;
-## 14                  &lt;NA&gt;         dateTime dateTimeDomain   hh:mm:ss.s
-##    dateTimePrecision    minimum                  unit precision numberType
-## 1               &lt;NA&gt;       &lt;NA&gt;                  &lt;NA&gt;      &lt;NA&gt;       &lt;NA&gt;
-## 2                  1       1944                  &lt;NA&gt;      &lt;NA&gt;       &lt;NA&gt;
-## 3               &lt;NA&gt;          0                number       0.5       real
-## 4               &lt;NA&gt;          0         dimensionless       0.1       real
-## 5               &lt;NA&gt;          0                second       0.1       real
-## 6               &lt;NA&gt;       &lt;NA&gt;    cubicFeetPerSecond       0.1       &lt;NA&gt;
-## 7               &lt;NA&gt;       &lt;NA&gt;            cubicMeter       0.1       &lt;NA&gt;
-## 8               &lt;NA&gt;       &lt;NA&gt;                radian       0.1       &lt;NA&gt;
-## 9               &lt;NA&gt;       &lt;NA&gt;                 meter       0.1       &lt;NA&gt;
-## 10              &lt;NA&gt;       &lt;NA&gt;                  inch       0.1       &lt;NA&gt;
-## 11              &lt;NA&gt;       &lt;NA&gt;              nanogram       0.1       &lt;NA&gt;
-## 12              &lt;NA&gt;          0   gramsPerSquareMeter      0.01       real
-## 13              &lt;NA&gt;          0 speciesPerSquareMeter      0.01       real
-## 14               0.1 15:00:00.0                  &lt;NA&gt;      &lt;NA&gt;       &lt;NA&gt;
-##       maximum
-## 1        &lt;NA&gt;
-## 2        &lt;NA&gt;
-## 3        &lt;NA&gt;
-## 4         1e2
-## 5        &lt;NA&gt;
-## 6        &lt;NA&gt;
-## 7        &lt;NA&gt;
-## 8        &lt;NA&gt;
-## 9        &lt;NA&gt;
-## 10       &lt;NA&gt;
-## 11       &lt;NA&gt;
-## 12       &lt;NA&gt;
-## 13       &lt;NA&gt;
-## 14 19:00:00.0
+## 12                  &lt;NA&gt;         dateTime dateTimeDomain   hh:mm:ss.s
+##    dateTimePrecision    minimum          unit precision numberType    maximum
+## 1               &lt;NA&gt;       &lt;NA&gt;          &lt;NA&gt;      &lt;NA&gt;       &lt;NA&gt;       &lt;NA&gt;
+## 2                  1       1944          &lt;NA&gt;      &lt;NA&gt;       &lt;NA&gt;       &lt;NA&gt;
+## 3               &lt;NA&gt;          0 dimensionless       0.5       real       &lt;NA&gt;
+## 4               &lt;NA&gt;          0 dimensionless       0.1       real        100
+## 5               &lt;NA&gt;          0 dimensionless       0.1       real       &lt;NA&gt;
+## 6               &lt;NA&gt;       &lt;NA&gt; dimensionless       0.1       &lt;NA&gt;       &lt;NA&gt;
+## 7               &lt;NA&gt;       &lt;NA&gt; dimensionless       0.1       &lt;NA&gt;       &lt;NA&gt;
+## 8               &lt;NA&gt;       &lt;NA&gt; dimensionless       0.1       &lt;NA&gt;       &lt;NA&gt;
+## 9               &lt;NA&gt;       &lt;NA&gt; dimensionless       0.1       &lt;NA&gt;       &lt;NA&gt;
+## 10              &lt;NA&gt;       &lt;NA&gt; dimensionless       0.1       &lt;NA&gt;       &lt;NA&gt;
+## 11              &lt;NA&gt;       &lt;NA&gt; dimensionless       0.1       &lt;NA&gt;       &lt;NA&gt;
+## 12               0.1 15:00:00.0          &lt;NA&gt;      &lt;NA&gt;       &lt;NA&gt; 19:00:00.0
 ## 
 ## $factors
 ## NULL</code></pre>
 </div>
-<div id="emld-package" class="section level3">
-<h3>emld package</h3>
-<pre class="r"><code>#report2$SummaryReporter$get_summary_view()</code></pre>
 </div>
-<div id="emldown-package" class="section level3">
-<h3>emldown package</h3>
-<pre class="r"><code>#report3$SummaryReporter$get_summary_view()</code></pre>
+</div>
+<div id="emldown-package" class="section level2">
+<h2>emldown package</h2>
+<p><em>emldown</em> is a package designed to allow visualisation and interaction with EML.</p>
+<div id="interact-with-eml-1" class="section level5">
+<h5>Interact with EML</h5>
+<pre class="r"><code>library(&quot;emldown&quot;)
+render_eml(system.file(&quot;extdata&quot;, &quot;hampton_underice.xml&quot;, package = &quot;emldown&quot;)) 
+
+#This creates a human readable version of the EML file in your browser</code></pre>
 </div>
 <div id="rnexml-package" class="section level3">
 <h3>RNeXML package</h3>
-<pre class="r"><code>#report4$SummaryReporter$get_summary_view()</code></pre>
+<p><em>RNeXML</em> is a package for reading and writing phylogenetic, character and trait metadata focussed on taxonomy. The package stands parallel to <em>EML</em> and <em>emd</em> using similar functions but is focused on a different (but related) standard NeXML rather than EML per se.</p>
 </div>
 <div id="datapack-package" class="section level3">
 <h3>datapack package</h3>
-<pre class="r"><code>#report5$SummaryReporter$get_summary_view()</code></pre>
+<p>The <em>datapack</em> package provides functions for collating multiple data and metadata objects of different types into a bundle that can be transported and loaded using a single composite file. It is primarily meant as a container to bundle together files for transport to or from DataONE data repositories. Metadata in the form of EML can be attached to the databundle.</p>
 </div>
 <div id="rbefdata-package" class="section level3">
 <h3>rbefdata package</h3>
-<pre class="r"><code>#report6$SummaryReporter$get_summary_view()</code></pre>
+<p>Similaty to the <em>datapack</em> package <em>rbefdata</em> links to the BEF data portal (<a href="https://fundiv.befdata.biow.uni-leipzig.de/" class="uri">https://fundiv.befdata.biow.uni-leipzig.de/</a>). The function <em>rbefdata::bef.portal.get.metadata()</em> extracts the metadata from a file that the user has downloaded from the BEF data portal.</p>
 </div>
 <div id="geometa-package" class="section level3">
 <h3>geometa package</h3>
-<pre class="r"><code>#report7$SummaryReporter$get_summary_view()</code></pre>
+<p><em>geometa</em> provides functions for reading and writing geographic metadata. It suggests <em>EML</em> and <em>emld</em>. It can convert metadat to and from EML using the <em>geometa::convert_metadata()</em> function.</p>
 </div>
 <div id="metaegress-package" class="section level3">
 <h3>MetaEgress package</h3>
-<pre class="r"><code>#report8$SummaryReporter$get_summary_view()</code></pre>
+<p><em>MetaEgress</em> is designed to create EML for Long Term Ecological Research metabase ( <a href="https://github.com/lter/LTER-core-metabase" class="uri">https://github.com/lter/LTER-core-metabase</a>). Validation of EML is done through <em>emld::eml_validate()</em></p>
 </div>
 <div id="emlassemblyline-package" class="section level3">
 <h3>EMLassemblyline package</h3>
-<pre class="r"><code>#report9$SummaryReporter$get_summary_view()</code></pre>
+<p><em>EMLassemblyline</em> is a metadata builder that has functions to autoextract metadata. The package is centered around a “data package” that is a collection of data objects and metadata. The templating functions allow the development of metadata templates that the user can add information to. <em>EMLassemblyline</em> also has a “living data” set of functions that allow ongoing data collection to be published at regular periods. See <a href="https://ediorg.github.io/EMLassemblyline/index.html" class="uri">https://ediorg.github.io/EMLassemblyline/index.html</a> for examples of the workflow.</p>
 </div>
 <div id="metainbase-package" class="section level3">
 <h3>MetaInbase package</h3>
-<pre class="r"><code>#report10$SummaryReporter$get_summary_view()</code></pre>
+<p><em>MetaInbase</em> has functions to convert EML to tables. It appears to be in an early stage of development</p>
 </div>
 </div>
 <div id="metashark-package" class="section level2">
 <h2>MetaShARK package</h2>
-<pre class="r"><code>#report11$SummaryReporter$get_summary_view()</code></pre>
-</div>
-</div>
-<div id="dependancies" class="section level1">
-<h1>Dependancies</h1>
-<pre class="r"><code>library(tidyverse)
-# 
-# length(report1$DependencyReporter$nodes$node)#48
-# length(report2$DependencyReporter$nodes$node)#13
-# length(report3$DependencyReporter$nodes$node)#79
-# length(report4$DependencyReporter$nodes$node)#49
-# length(report5$DependencyReporter$nodes$node)#39
-# length(report6$DependencyReporter$nodes$node)#17
-# length(report7$DependencyReporter$nodes$node)#16
-# length(report8$DependencyReporter$nodes$node)#58
-# length(report9$DependencyReporter$nodes$node)#103
-# #length(report10$DependencyReporter$nodes$node)#No Dependency
-# length(report11$DependencyReporter$nodes$node)#170
-# 
-# PkgName=c(rep(&quot;EML&quot;,48), rep(&quot;emld&quot;,13), rep(&quot;emldown&quot;,79), rep(&quot;RNeXML&quot;, 49),
-#           rep(&quot;datapack&quot;, 39), rep(&quot;rbefdata&quot;, 17), rep(&quot;geometa&quot;, 16), rep(&quot;MetaEgress&quot;, 58), 
-#           rep(&quot;EMLassemblyline&quot;, 103), rep(&quot;MetaShARK&quot;, 170))
-# 
-# Dependency=c(report1$DependencyReporter$nodes$node,
-#                   report2$DependencyReporter$nodes$node,
-#                   report3$DependencyReporter$nodes$node,
-#                   report4$DependencyReporter$nodes$node,
-#                   report5$DependencyReporter$nodes$node,
-#                   report6$DependencyReporter$nodes$node,
-#                   report7$DependencyReporter$nodes$node,
-#                   report8$DependencyReporter$nodes$node,
-#              report9$DependencyReporter$nodes$node,
-#              #report10$DependencyReporter$nodes$node,
-#              report11$DependencyReporter$nodes$node)
-# 
-# dtab=data.frame(PkgName,Dependency)
-# dtab$PkgName&lt;-as.character(dtab$PkgName)
-# dtab$Dependency&lt;-as.character(dtab$Dependency)
-# 
-# 
-# dtab=dtab %&gt;% 
-#   filter(!PkgName==Dependency)
-# dtab %&gt;% 
-#   select(Dependency) %&gt;% 
-#   group_by(Dependency) %&gt;% 
-#   tally() %&gt;% 
-#   arrange(desc(n)) %&gt;% 
-#   top_n(.,15) %&gt;% 
-#   ggplot(aes(reorder(Dependency,n),n, fill=&quot;red&quot;))+
-#   geom_bar(stat=&quot;Identity&quot;)+
-#   coord_flip()
-# </code></pre>
-<div id="eml-package" class="section level3">
-<h3>EML Package</h3>
-<pre class="r"><code># report1$SummaryReporter$get_summary_view()</code></pre>
+<p><em>MetaShARK</em> (Metadata Shiny Automated Resource &amp; Knowledge) is a R shiny app allowing the user to get information about EML and to fill in metadata for datasets according to this standard. This package has developed a user-friendly Shiny App for researchers not familiar with EML standards.</p>
 </div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs">
-
+<div id="ref-EML_2019">
+<p>Jones, Matthew, Margaret O’Brien, Bryce Mecum, Carl Boettiger, Mark Schildhauer, Mitchell Maier, Timothy Whiteaker, Stevan Earl, and Steven Chong. 2019. “Ecological Metadata Language Version 2.2.0.” <a href="https://doi.org/10.5063/f11834t2">https://doi.org/10.5063/f11834t2</a>.</p>
+</div>
 </div>
 <div style="page-break-after: always;"></div>
 </div>

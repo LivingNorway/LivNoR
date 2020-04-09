@@ -1,7 +1,7 @@
 ---
 title: "EML R package overview"
 author: "Matt"
-date: "6 4 2020"
+date: "`r format(Sys.time(), '%d %M, %Y')`"
 output: html_document
 bibliography: bibliography.bib
 ---
@@ -42,19 +42,26 @@ library(EMLassemblyline)
 library(MetaInbase)
 library(MetaShARK)
 
+
+library(jsonlite)
+library(magrittr) # for pipes
+library(jqr)      # for JQ examples only
+library(rdflib)   # for RDf examples only
+
 ```
 
 # R packages that interact with EML 
 
 ## Introduction
 
-EML (Ecological Metadata Langauage; [@Ecological Metadata Language version 2.2.0]) is a version of the machine and human readable XML (Extensible Markup Language) which is designed to facilitate data documentation (i.e. metadata) to ease open data and sharing. EML consists of "modules" that allow the description of data attributes (e.g. spatial, temporal, taxonomic extent).
+EML (Ecological Metadata Langauage; [@EML_2019]) is a version of the machine and human readable XML (Extensible Markup Language) which is designed to facilitate data documentation (i.e. metadata) to ease open data and sharing. EML consists of "modules" that allow the description of data attributes (e.g. spatial, temporal, taxonomic extent).
 
 GBIF (the Global Biodiversity Information Facility), which is an international network and research infrastructure, provides open access to data about biodiversity. The GBIF metadata profile is based on EML and as such anyone interacting with GBIF needs to be able to read, write or visualise data in the EML format. 
 
-Writing directly in EML can be a technical barrier to many researchers who, in ecology, may only have experience in the R langauge which has a very different syntax and data structure. 
+Writing directly in EML can be a technical barrier to many researchers who, in ecology, may only have experience in the R langauge which has a very different syntax and data structure. Several R packages have functions to read, write or interact with EML files and here we aim to identify those that will be useful for researchers working with ecological data.  
+
 ### Aim
-To identify R packages and functions that can read, write or visualise data in the EML format 
+To identify R packages and functions that can read, write or interact/visualise data in the EML format 
 
 #### Objectives
 1) To review the available packages on CRAN and on GitHub that have functions to interact with EML
@@ -78,9 +85,9 @@ tb %>%
 ```
 
 
+*****
 
-
-```{r}
+```{r, echo=FALSE}
 # library(collapsibleTree)
 # eml<-data.frame("Level1"=c("dataset",
 #                                     "creator",
@@ -120,90 +127,131 @@ tb %>%
 
 
 
-#### Reading EML
+#### emld package
 
-The read_eml() function reads eml files in to the R session. eml_get() allows you to access the attributes of the eml file. 
+The *emld* package is closely related to the EML package and its functions are heavily relied upon in the latest version of *EML*. 
+
+*emld* has an advantage over *EML* where there are large, highly nested EML files. It can flattern EML in to common R formats that can be manipulated in R. 
+
+##### Read EML
+
+```{r}
+# Example from https://github.com/ropensci/emld
+f <- system.file("extdata/example.xml", package="emld")
+eml <- emld::as_emld(f)
+eml$dataset$title
+```
+
+##### Write EML
+
+*emld* objects are nested lists so to write EML in *emld* you can create a list.
+
+```{r}
+# Example from https://github.com/ropensci/emld
+
+me <- list(individualName = list(givenName = "Joe", surName = "Bloggs"))
+
+eml <- list(dataset = list(
+              title = "The biggest fish in the sea",
+              contact = me,
+              creator = me),
+              system = "doi",
+              packageId = "10.xxx")
+
+ex.xml <- tempfile("ex", fileext = ".xml") # use your preferred file path
+
+as_xml(eml, ex.xml)
+
+```
+*emld::as_xml()* reorders the list if neccessary to ensure that it matches the EML required format. You can use *emld::eml_validate()* to check that the EML has been written correctly and is a valid EML file.
+
+```{r}
+eml_validate(ex.xml)
+```
+
+
+#### EML package
+
+The *EML* package uses *emld* as a basis for many of its functions. 
+
+##### Read EML
+
+The read_eml() function reads eml files in to the R session. 
 
 
 ```{r}
 f <- system.file("tests", emld::eml_version(), "eml-datasetWithUnits.xml", package = "emld")
 eml <- read_eml(f)
-eml_get(eml, "physical")
-eml_get(eml,"dataset")
+eml$dataset$title
+```
+
+##### Write EML
+
+Several functions (with the prefix *set_*) allow the user to import attributes of the dataset file (e.g. the methods) as word or Markdown documents and merge them in to a single EML file (see https://docs.ropensci.org/EML/ for a detailed tutorial).
+
+##### Interact with EML
+
+*EML* has several functions (with the prefix *get_*) which allow a user to extract elements of an XML file. 
+
+
+```{r}
+f <- system.file("tests", emld::eml_version(), 
+  "eml-datasetWithAttributelevelMethods.xml", package = "emld")
+eml <- read_eml(f)
 get_attributes(eml$dataset$dataTable$attributeList)
 
-
 ```
 
+## emldown package
 
+*emldown* is a package designed to allow visualisation and interaction with EML. 
 
-### emld package
-
-
-
-```{r emld}
-#report2$SummaryReporter$get_summary_view()
-
-
-```
-
-### emldown package
-
+##### Interact with EML
 
 ```{r emldown}
-#report3$SummaryReporter$get_summary_view()
+library("emldown")
+render_eml(system.file("extdata", "hampton_underice.xml", package = "emldown")) 
 
+#This creates a human readable version of the EML file in your browser
 
 ```
+
 
 ### RNeXML package
 
-```{r RNeXML}
-#report4$SummaryReporter$get_summary_view()
+*RNeXML* is a package for reading and writing phylogenetic, character and trait metadata focussed on taxonomy. The package stands parallel to *EML* and *emd* using similar functions but is focused on a different (but related) standard NeXML rather than EML per se.
 
-
-```
 
 ### datapack package
 
+The *datapack* package provides functions for collating multiple data and metadata objects of different types into a bundle that can be transported and loaded using a single composite file. It is primarily meant as a container to bundle together files for transport to or from DataONE data repositories. Metadata in the form of EML can be attached to the databundle. 
 
-```{r datapack}
-#report5$SummaryReporter$get_summary_view()
+```{r datapack, echo=FALSE}
+# metadataFile <- system.file("extdata/sample-eml.xml", package="datapack")
+# metadataId <- "metadataId"
+# metadataObj <- new("DataObject", id=metadataId, format="eml://ecoinformatics.org/eml-2.1.0", file=metadataFile)
+# metadataObj
 
 
 ```
 
 ### rbefdata package
 
-
-```{r rbefdata}
-#report6$SummaryReporter$get_summary_view()
-
-
-```
+Similaty to the *datapack* package *rbefdata* links to the BEF data portal (https://fundiv.befdata.biow.uni-leipzig.de/). The function *rbefdata::bef.portal.get.metadata()* extracts the metadata from a file that the user has downloaded from the BEF data portal.
 
 ### geometa package
 
-
-```{r geometa}
-#report7$SummaryReporter$get_summary_view()
-
-
-```
+*geometa* provides functions for reading and writing geographic metadata. It suggests *EML* and *emld*. It can convert metadat to and from EML using the *geometa::convert_metadata()* function. 
 
 ### MetaEgress package
 
-
-```{r MetaEgress}
-#report8$SummaryReporter$get_summary_view()
-
-
-```
+*MetaEgress* is designed to create EML for Long Term Ecological Research metabase ( https://github.com/lter/LTER-core-metabase). Validation of EML is done through *emld::eml_validate()*
 
 ### EMLassemblyline package
 
+*EMLassemblyline* is a metadata builder that has functions to autoextract metadata. The package is centered around a "data package" that is a collection of data objects and metadata. The templating functions allow the development of metadata templates that the user can add information to. *EMLassemblyline* also has a "living data" set of functions that allow ongoing data collection to be published at regular periods. See https://ediorg.github.io/EMLassemblyline/index.html for examples of the workflow.
 
-```{r EMLassembly}
+```{r EMLassembly, echo=FALSE}
 #report9$SummaryReporter$get_summary_view()
 
 
@@ -211,17 +259,15 @@ get_attributes(eml$dataset$dataTable$attributeList)
 
 ### MetaInbase package
 
+*MetaInbase* has functions to convert EML to tables. It appears to be in an early stage of development
 
-```{r MetaIn}
-#report10$SummaryReporter$get_summary_view()
-
-
-```
 
 ## MetaShARK package
 
+*MetaShARK* (Metadata Shiny Automated Resource & Knowledge) is a R shiny app allowing the user to get information about EML and to fill in metadata for datasets according to this standard. This package has developed a user-friendly Shiny App for researchers not familiar with EML standards.
 
-```{r MetaShARK}
+
+```{r MetaShARK, echo=FALSE}
 #report11$SummaryReporter$get_summary_view()
 
 
@@ -229,10 +275,11 @@ get_attributes(eml$dataset$dataTable$attributeList)
 
 
 
-# Dependancies
 
-```{r}
-library(tidyverse)
+
+```{r, echo=FALSE}
+# Dependancies
+#library(tidyverse)
 # 
 # length(report1$DependencyReporter$nodes$node)#48
 # length(report2$DependencyReporter$nodes$node)#13
@@ -310,16 +357,6 @@ library(tidyverse)
 ```
 
 
-### EML Package
-
-
-```{r EML}
-# report1$SummaryReporter$get_summary_view()
-
-
-
-
-```
 
 
 # References {-}
