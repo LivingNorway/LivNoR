@@ -133,7 +133,7 @@ The *emld* package is closely related to the EML package and its functions are h
 
 *emld* has an advantage over *EML* where there are large, highly nested EML files. It can flattern EML in to common R formats that can be manipulated in R. 
 
-##### Read EML
+
 
 ```{r}
 # Example from https://github.com/ropensci/emld
@@ -142,7 +142,7 @@ eml <- emld::as_emld(f)
 eml$dataset$title
 ```
 
-##### Write EML
+
 
 *emld* objects are nested lists so to write EML in *emld* you can create a list.
 
@@ -174,7 +174,6 @@ eml_validate(ex.xml)
 
 The *EML* package uses *emld* as a basis for many of its functions. 
 
-##### Read EML
 
 The read_eml() function reads eml files in to the R session. 
 
@@ -185,11 +184,9 @@ eml <- read_eml(f)
 eml$dataset$title
 ```
 
-##### Write EML
 
 Several functions (with the prefix *set_*) allow the user to import attributes of the dataset file (e.g. the methods) as word or Markdown documents and merge them in to a single EML file (see https://docs.ropensci.org/EML/ for a detailed tutorial).
 
-##### Interact with EML
 
 *EML* has several functions (with the prefix *get_*) which allow a user to extract elements of an XML file. 
 
@@ -206,7 +203,6 @@ get_attributes(eml$dataset$dataTable$attributeList)
 
 *emldown* is a package designed to allow visualisation and interaction with EML. 
 
-##### Interact with EML
 
 ```{r emldown}
 library("emldown")

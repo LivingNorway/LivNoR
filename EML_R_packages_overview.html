@@ -364,7 +364,7 @@ summary {
 
 <h1 class="title toc-ignore">EML R package overview</h1>
 <h4 class="author">Matt</h4>
-<h4 class="date">09 21, 2020</h4>
+<h4 class="date">09 52, 2020</h4>
 
 </div>
 
@@ -457,16 +457,11 @@ summary {
 <h4>emld package</h4>
 <p>The <em>emld</em> package is closely related to the EML package and its functions are heavily relied upon in the latest version of <em>EML</em>.</p>
 <p><em>emld</em> has an advantage over <em>EML</em> where there are large, highly nested EML files. It can flattern EML in to common R formats that can be manipulated in R.</p>
-<div id="read-eml" class="section level5">
-<h5>Read EML</h5>
 <pre class="r"><code># Example from https://github.com/ropensci/emld
 f &lt;- system.file(&quot;extdata/example.xml&quot;, package=&quot;emld&quot;)
 eml &lt;- emld::as_emld(f)
 eml$dataset$title</code></pre>
 <pre><code>## [1] &quot;Data from Cedar Creek LTER on productivity and species richness\n  for use in a workshop titled \&quot;An Analysis of the Relationship between\n  Productivity and Diversity using Experimental Results from the Long-Term\n  Ecological Research Network\&quot; held at NCEAS in September 1996.&quot;</code></pre>
-</div>
-<div id="write-eml" class="section level5">
-<h5>Write EML</h5>
 <p><em>emld</em> objects are nested lists so to write EML in <em>emld</em> you can create a list.</p>
 <pre class="r"><code># Example from https://github.com/ropensci/emld
 
@@ -488,24 +483,15 @@ as_xml(eml, ex.xml)</code></pre>
 ## attr(,&quot;errors&quot;)
 ## character(0)</code></pre>
 </div>
-</div>
 <div id="eml-package" class="section level4">
 <h4>EML package</h4>
 <p>The <em>EML</em> package uses <em>emld</em> as a basis for many of its functions.</p>
-<div id="read-eml-1" class="section level5">
-<h5>Read EML</h5>
 <p>The read_eml() function reads eml files in to the R session.</p>
 <pre class="r"><code>f &lt;- system.file(&quot;tests&quot;, emld::eml_version(), &quot;eml-datasetWithUnits.xml&quot;, package = &quot;emld&quot;)
 eml &lt;- read_eml(f)
 eml$dataset$title</code></pre>
 <pre><code>## [1] &quot;Data from Cedar Creek LTER on productivity and species richness\n  for use in a workshop titled \&quot;An Analysis of the Relationship between\n  Productivity and Diversity using Experimental Results from the Long-Term\n  Ecological Research Network\&quot; held at NCEAS in September 1996.&quot;</code></pre>
-</div>
-<div id="write-eml-1" class="section level5">
-<h5>Write EML</h5>
 <p>Several functions (with the prefix <em>set_</em>) allow the user to import attributes of the dataset file (e.g. the methods) as word or Markdown documents and merge them in to a single EML file (see <a href="https://docs.ropensci.org/EML/" class="uri">https://docs.ropensci.org/EML/</a> for a detailed tutorial).</p>
-</div>
-<div id="interact-with-eml" class="section level5">
-<h5>Interact with EML</h5>
 <p><em>EML</em> has several functions (with the prefix <em>get_</em>) which allow a user to extract elements of an XML file.</p>
 <pre class="r"><code>f &lt;- system.file(&quot;tests&quot;, emld::eml_version(), 
   &quot;eml-datasetWithAttributelevelMethods.xml&quot;, package = &quot;emld&quot;)
@@ -569,17 +555,13 @@ get_attributes(eml$dataset$dataTable$attributeList)</code></pre>
 ## NULL</code></pre>
 </div>
 </div>
-</div>
 <div id="emldown-package" class="section level2">
 <h2>emldown package</h2>
 <p><em>emldown</em> is a package designed to allow visualisation and interaction with EML.</p>
-<div id="interact-with-eml-1" class="section level5">
-<h5>Interact with EML</h5>
 <pre class="r"><code>library(&quot;emldown&quot;)
 render_eml(system.file(&quot;extdata&quot;, &quot;hampton_underice.xml&quot;, package = &quot;emldown&quot;)) 
 
 #This creates a human readable version of the EML file in your browser</code></pre>
-</div>
 <div id="rnexml-package" class="section level3">
 <h3>RNeXML package</h3>
 <p><em>RNeXML</em> is a package for reading and writing phylogenetic, character and trait metadata focussed on taxonomy. The package stands parallel to <em>EML</em> and <em>emd</em> using similar functions but is focused on a different (but related) standard NeXML rather than EML per se.</p>
