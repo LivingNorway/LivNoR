@@ -1,7 +1,7 @@
 ---
 title: "EML R package overview"
 author: "Matt"
-date: "`r format(Sys.time(), '%d %M, %Y')`"
+date: "`r format(Sys.time(), '%d %m, %Y')`"
 output: html_document
 bibliography: bibliography.bib
 ---
@@ -353,6 +353,22 @@ Similaty to the *datapack* package *rbefdata* links to the BEF data portal (http
 ```
 
 
+
+### Places to go for help
+
+* https://environmentaldatainitiative.org/five-phases-of-data-publishing/phase-3/make-eml-with-r/
+* https://cran.r-project.org/web/packages/EML/vignettes/creating-EML.html
+* https://cran.r-project.org/web/packages/emld/vignettes/tutorial.html
+* https://www.neonscience.org/dc-metadata-importance-eml-r
+* https://ropensci.org/blog/2017/08/01/emldown/
+
+### Publications that include R code
+
+
+
+#### Contributors
+
+Matt Grainger, 
 
 
 # References {-}
